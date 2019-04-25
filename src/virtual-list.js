@@ -45,18 +45,28 @@ export default class VirtualList extends React.PureComponent {
   renderVisibleItems() {
     const { itemHeight, itemsCount, ItemComponent } = this.props;
     const startIndex = Math.floor(this.state.scrollTop / itemHeight);
-    const endIndex = Math.min(startIndex + Math.ceil(this.props.height / itemHeight) + 1, itemsCount);
+    const endIndex = Math.min(
+      startIndex + Math.ceil(this.props.height / itemHeight) + 1,
+      itemsCount
+    );
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
-        <div key={i - startIndex} className="virtual-list__item-wrapper" style={{ top: i * itemHeight, height: itemHeight}}>
+        <div
+          key={i - startIndex}
+          className="virtual-list__item-wrapper"
+          style={{ top: i * itemHeight, height: itemHeight}}
+        >
           <ItemComponent index={i} />
         </div>
       );
     }
 
     return (
-      <div style={this.calcContentWrapperStyle(itemHeight, itemsCount)} className="virtual-list__content-wrapper">
+      <div
+        style={this.calcContentWrapperStyle(itemHeight, itemsCount)}
+        className="virtual-list__content-wrapper"
+      >
         {items}
       </div>
     );
