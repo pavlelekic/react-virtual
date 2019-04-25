@@ -49,7 +49,7 @@ export default class VirtualList extends React.PureComponent {
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
-        <div key={i} className="virtual-list__item-wrapper" style={{ top: i * itemHeight, height: itemHeight}}>
+        <div key={i - startIndex} className="virtual-list__item-wrapper" style={{ top: i * itemHeight, height: itemHeight}}>
           <ItemComponent index={i} />
         </div>
       );

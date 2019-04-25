@@ -1,15 +1,24 @@
 import React from 'react';
 import VirtualList from './virtual-list';
 
-const items = new Array(1000).fill(true).map((v, i) => 'Row #' + i);
+const items = [];
+for (let i = 0; i < 1000; i++) {
+    items.push('Row #' + i);
+}
 const itemHeight = 50;
 
 class Item extends React.PureComponent {
-    itemStyle = { backgroundColor: '#cacaca', padding: 5, height: '100%' };
+    static itemStyle = {
+        backgroundColor: '#cacaca',
+        paddingLeft: 12,
+        display: 'flex',
+        alignItems: 'center',
+        height: '100%'
+    };
 
     render() {
         return (
-            <div style={this.itemStyle}>
+            <div style={Item.itemStyle}>
                 {items[this.props.index]}
             </div>
         );
