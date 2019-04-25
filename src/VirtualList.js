@@ -38,8 +38,7 @@ export default class VirtualList extends React.PureComponent {
   calcListWrapperStyle = memoize((style, height) => ({
     ...style,
     height,
-    overflowY: 'scroll',
-    position: 'relative'
+    overflowY: 'scroll'
   }));
 
   handleScroll = (event) => {
@@ -51,7 +50,8 @@ export default class VirtualList extends React.PureComponent {
   }
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
-    height: itemHeight * itemsCount
+    height: itemHeight * itemsCount,
+    position: 'relative'
   }));
 
   renderVisibleItems() {
@@ -60,8 +60,8 @@ export default class VirtualList extends React.PureComponent {
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
-        <div key={i} style={{ position: 'absolute', top: i * this.props.itemHeight, height: this.props.itemHeight}}>
-          {this.props.renderItem(i)}
+        <div key={i} style={{ position: 'absolute', top: i * this.props.itemHeight, height: this.props.itemHeight, width: '100%'}}>
+          <this.props.ItemComponent index={i} />
         </div>
       );
     }
@@ -90,7 +90,7 @@ VirtualList.propTypes = {
   style: PropTypes.object,
   height: PropTypes.number.isRequired,
   itemHeight: PropTypes.number.isRequired,
-  renderItem: PropTypes.func.isRequired,
+  ItemComponent: PropTypes.node.isRequired,
   itemsCount: PropTypes.number.isRequired
 }
 

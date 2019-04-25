@@ -3,13 +3,18 @@ import VirtualList from './VirtualList';
 
 const items = new Array(1000).fill(true).map((v, i) => 'Row #' + i);
 const itemHeight = 50;
-const itemStyle = {backgroundColor: '#cacaca', padding: 5, margin: 3, height: itemHeight, width: '100%'};
 
-const renderItem = (...args) => (
-    <div style={itemStyle}>
-        {JSON.stringify(args)}
-    </div>
-);
+class Item extends React.PureComponent {
+    itemStyle = { backgroundColor: '#cacaca', padding: 5, display: 'flex', flex: 1 };
+
+    render() {
+        return (
+            <div style={this.itemStyle}>
+                {this.props.index}
+            </div>
+        );
+    }
+}
 
 const App = () => {
     return (
@@ -17,7 +22,7 @@ const App = () => {
             itemsCount={items.length}
             height={500}
             itemHeight={itemHeight}
-            renderItem={renderItem}
+            ItemComponent={Item}
         />
     );
 };
