@@ -34,12 +34,7 @@ export default class VirtualList extends React.PureComponent {
     overflowY: 'scroll'
   }));
 
-  handleScroll = (event) => {
-    const e = event.nativeEvent;
-    // if (e) {
-      this.scrollTop = e.srcElement.scrollTop;
-    // }
-  }
+  handleScroll = (event) => this.scrollTop = event.nativeEvent.srcElement.scrollTop;
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
     height: itemHeight * itemsCount,
