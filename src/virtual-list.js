@@ -4,11 +4,11 @@ import memoize from 'memoize-one';
 import './virtual-list.scss';
 
 export default class VirtualList extends React.PureComponent {
-  scrollTop = 0;
+  didScroll = false;
 
   constructor(props) {
     super(props);
-    this.state = { scrollTop: this.scrollTop };
+    this.state = { scrollTop: 0 };
 
     this.updateDom = this.updateDom.bind(this);
   }
@@ -18,8 +18,9 @@ export default class VirtualList extends React.PureComponent {
   }
 
   updateDom() {
-    if (this.state.scrollTop !== this.scrollTop) {
-      this.setState({ scrollTop: this.scrollTop });
+    if (this.didScroll) {
+      this.setState({ scrollTop: this.listWrapperRef.scrollTop });
+      this.didScroll = false;
     }
     this.rafHandle = window.requestAnimationFrame(this.updateDom);
   }
@@ -34,12 +35,14 @@ export default class VirtualList extends React.PureComponent {
     overflowY: 'scroll'
   }));
 
-  handleScroll = (event) => this.scrollTop = event.nativeEvent.srcElement.scrollTop;
+  handleScroll = (event) => this.didScroll = true;
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
     height: itemHeight * itemsCount,
     position: 'relative'
   }));
+
+  saveListWrapperRef = (r) => this.listWrapperRef = r;
 
   renderVisibleItems() {
     const { itemHeight, itemsCount, ItemComponent } = this.props;
@@ -65,6 +68,7 @@ export default class VirtualList extends React.PureComponent {
   render() {
     return (
       <div
+        ref={this.saveListWrapperRef}
         style={this.calcListWrapperStyle(this.props.style, this.props.height)}
         onScroll={this.handleScroll}
       >{this.renderVisibleItems()}</div>
