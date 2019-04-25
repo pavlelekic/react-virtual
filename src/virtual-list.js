@@ -1,17 +1,14 @@
 import React from 'react';
-import { Map } from 'immutable';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import './virtual-list.scss';
 
 export default class VirtualList extends React.PureComponent {
-  currentState = Map({
-    scrollTop: 0
-  });
+  scrollTop = 0;
 
   constructor(props) {
     super(props);
-    this.state = { renderedState: this.currentState };
+    this.state = { scrollTop: this.scrollTop };
 
     this.updateDom = this.updateDom.bind(this);
   }
@@ -20,13 +17,9 @@ export default class VirtualList extends React.PureComponent {
     this.rafHandle = window.requestAnimationFrame(this.updateDom);
   }
 
-  replaceCurrnetStateWithRenderedState = () => {
-    this.currentState = this.state.renderedState;
-  }
-
   updateDom() {
-    if (this.state.renderedState !== this.currentState) {
-      this.setState({ renderedState: this.currentState }, this.replaceCurrnetStateWithRenderedState);
+    if (this.state.scrollTop !== this.scrollTop) {
+      this.setState({ scrollTop: this.scrollTop });
     }
     window.requestAnimationFrame(this.updateDom);
   }
@@ -43,9 +36,9 @@ export default class VirtualList extends React.PureComponent {
 
   handleScroll = (event) => {
     const e = event.nativeEvent;
-    if (e) {
-      this.currentState = this.currentState.set('scrollTop', e.srcElement.scrollTop);
-    }
+    // if (e) {
+      this.scrollTop = e.srcElement.scrollTop;
+    // }
   }
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
@@ -55,7 +48,7 @@ export default class VirtualList extends React.PureComponent {
 
   renderVisibleItems() {
     const { itemHeight, itemsCount, ItemComponent } = this.props;
-    const startIndex = Math.floor(this.state.renderedState.get('scrollTop') / itemHeight);
+    const startIndex = Math.floor(this.state.scrollTop / itemHeight);
     const numVisibleItems = Math.ceil(this.props.height / itemHeight);
     const endIndex = Math.min(startIndex + numVisibleItems, itemsCount);
     const items = [];
@@ -88,7 +81,7 @@ VirtualList.propTypes = {
   style: PropTypes.object,
   height: PropTypes.number.isRequired,
   itemHeight: PropTypes.number.isRequired,
-  ItemComponent: PropTypes.node.isRequired,
+  ItemComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   itemsCount: PropTypes.number.isRequired
 }
 
