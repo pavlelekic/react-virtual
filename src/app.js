@@ -5,7 +5,7 @@ const items = new Array(1000).fill(true).map((v, i) => 'Row #' + i);
 const itemHeight = 50;
 
 class Item extends React.PureComponent {
-    itemStyle = { backgroundColor: '#cacaca', padding: 5, display: 'flex', flex: 1 };
+    itemStyle = { backgroundColor: '#cacaca', padding: 5, height: '100%' };
 
     render() {
         return (

@@ -56,7 +56,8 @@ export default class VirtualList extends React.PureComponent {
 
   renderVisibleItems() {
     const startIndex = Math.floor(this.state.renderedState.get('scrollTop') / this.props.itemHeight);
-    const endIndex = startIndex + Math.ceil(this.props.height / this.props.itemHeight);
+    const numVisibleItems = Math.ceil(this.props.height / this.props.itemHeight);
+    const endIndex = Math.min(startIndex + numVisibleItems, this.props.itemsCount.length);
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
