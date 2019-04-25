@@ -21,7 +21,7 @@ export default class VirtualList extends React.PureComponent {
     if (this.state.scrollTop !== this.scrollTop) {
       this.setState({ scrollTop: this.scrollTop });
     }
-    window.requestAnimationFrame(this.updateDom);
+    this.rafHandle = window.requestAnimationFrame(this.updateDom);
   }
 
   componentWillUnmount() {
