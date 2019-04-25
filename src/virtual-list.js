@@ -31,15 +31,13 @@ export default class VirtualList extends React.PureComponent {
 
   calcListWrapperStyle = memoize((style, height) => ({
     ...style,
-    height,
-    overflowY: 'scroll'
+    height
   }));
 
   handleScroll = (event) => this.didScroll = true;
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
-    height: itemHeight * itemsCount,
-    position: 'relative'
+    height: itemHeight * itemsCount
   }));
 
   saveListWrapperRef = (r) => this.listWrapperRef = r;
@@ -47,8 +45,7 @@ export default class VirtualList extends React.PureComponent {
   renderVisibleItems() {
     const { itemHeight, itemsCount, ItemComponent } = this.props;
     const startIndex = Math.floor(this.state.scrollTop / itemHeight);
-    const numVisibleItems = Math.ceil(this.props.height / itemHeight) + 1; // one more edge item on bottom
-    const endIndex = Math.min(startIndex + numVisibleItems, itemsCount);
+    const endIndex = Math.min(startIndex + Math.ceil(this.props.height / itemHeight) + 1, itemsCount);
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
@@ -59,7 +56,7 @@ export default class VirtualList extends React.PureComponent {
     }
 
     return (
-      <div style={this.calcContentWrapperStyle(itemHeight, itemsCount)}>
+      <div style={this.calcContentWrapperStyle(itemHeight, itemsCount)} className="virtual-list__content-wrapper">
         {items}
       </div>
     );
@@ -68,6 +65,7 @@ export default class VirtualList extends React.PureComponent {
   render() {
     return (
       <div
+        className="virtual-list"
         ref={this.saveListWrapperRef}
         style={this.calcListWrapperStyle(this.props.style, this.props.height)}
         onScroll={this.handleScroll}

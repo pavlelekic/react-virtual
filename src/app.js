@@ -10,7 +10,7 @@ class Item extends React.PureComponent {
     render() {
         return (
             <div style={this.itemStyle}>
-                {this.props.index}
+                {items[this.props.index]}
             </div>
         );
     }
