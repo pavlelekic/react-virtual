@@ -1,5 +1,5 @@
 import React from 'react';
-import VirtualList from './VirtualList';
+import VirtualList from './virtual-list';
 
 const items = new Array(1000).fill(true).map((v, i) => 'Row #' + i);
 const itemHeight = 50;

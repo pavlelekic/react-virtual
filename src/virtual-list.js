@@ -2,7 +2,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
-
+import './virtual-list.scss';
 
 export default class VirtualList extends React.PureComponent {
   currentState = Map({
@@ -44,7 +44,6 @@ export default class VirtualList extends React.PureComponent {
   handleScroll = (event) => {
     const e = event.nativeEvent;
     if (e) {
-      console.log(e.srcElement.scrollTop);
       this.currentState = this.currentState.set('scrollTop', e.srcElement.scrollTop);
     }
   }
@@ -55,23 +54,21 @@ export default class VirtualList extends React.PureComponent {
   }));
 
   renderVisibleItems() {
-    const startIndex = Math.floor(this.state.renderedState.get('scrollTop') / this.props.itemHeight);
-    const numVisibleItems = Math.ceil(this.props.height / this.props.itemHeight);
-    const endIndex = Math.min(startIndex + numVisibleItems, this.props.itemsCount.length);
+    const { itemHeight, itemsCount, ItemComponent } = this.props;
+    const startIndex = Math.floor(this.state.renderedState.get('scrollTop') / itemHeight);
+    const numVisibleItems = Math.ceil(this.props.height / itemHeight);
+    const endIndex = Math.min(startIndex + numVisibleItems, itemsCount);
     const items = [];
     for (let i = startIndex; i < endIndex; i++) {
       items.push(
-        <div key={i} style={{ position: 'absolute', top: i * this.props.itemHeight, height: this.props.itemHeight, width: '100%'}}>
-          <this.props.ItemComponent index={i} />
+        <div key={i} className="virtual-list__item-wrapper" style={{ top: i * itemHeight, height: itemHeight}}>
+          <ItemComponent index={i} />
         </div>
       );
     }
 
     return (
-      <div style={this.calcContentWrapperStyle(
-        this.props.itemHeight,
-        this.props.itemsCount
-      )}>
+      <div style={this.calcContentWrapperStyle(itemHeight, itemsCount)}>
         {items}
       </div>
     );
