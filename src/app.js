@@ -5,20 +5,28 @@ const items = [];
 for (let i = 0; i < 1000; i++) {
     items.push('Row #' + i);
 }
-const itemHeight = 50;
 
 class Item extends React.PureComponent {
-    static itemStyle = {
-        backgroundColor: '#cacaca',
+    static sharedStyle = {
         paddingLeft: 12,
         display: 'flex',
         alignItems: 'center',
         height: '100%'
     };
 
+    static oddItemStyle = {
+        ...Item.sharedStyle,
+        backgroundColor: '#aaaaaa'
+    };
+
+    static evenItemStyle = {
+        ...Item.sharedStyle,
+        backgroundColor: '#cacaca'
+    };
+
     render() {
         return (
-            <div style={Item.itemStyle}>
+            <div style={this.props.index % 2 === 0 ? Item.evenItemStyle : Item.oddItemStyle}>
                 {items[this.props.index]}
             </div>
         );
@@ -30,7 +38,7 @@ const App = () => {
         <VirtualList
             itemsCount={items.length}
             height={500}
-            itemHeight={itemHeight}
+            itemHeight={50}
             ItemComponent={Item}
         />
     );
