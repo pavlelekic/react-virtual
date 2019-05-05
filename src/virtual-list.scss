@@ -8,5 +8,9 @@
     &__item-wrapper {
         position: absolute;
         width: 100%;
+
+        &--hidden {
+            visibility: hidden;
+        }
     }
 }
