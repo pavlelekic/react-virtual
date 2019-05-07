@@ -1,0 +1,9 @@
+.invisible-measurer {
+    &__item-wrapper {
+        position: absolute;
+        width: 100%;
+        visibility: hidden;
+        top: 0;
+        z-index: -1;
+    }
+}

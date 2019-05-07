@@ -1,7 +1,8 @@
 .virtual-list {
     overflow-y: scroll;
+    position: relative;
 
-    &__content-wrapper {
+    &__runway {
         position: relative;
     }
 
