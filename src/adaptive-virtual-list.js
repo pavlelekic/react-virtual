@@ -20,6 +20,14 @@ export default class VirtualList extends React.PureComponent {
         this.rafHandle = window.requestAnimationFrame(this.updateDom);
     }
 
+    getSnapshotBeforeUpdate = () => this.listWrapperRef.scrollTop;
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (snapshot !== null) {
+            this.listWrapperRef.scrollTop = snapshot;
+        }
+    }
+
     updateDom() {
         if (this.didScroll) {
             const items = this.listWrapperRef.childNodes;
@@ -27,7 +35,6 @@ export default class VirtualList extends React.PureComponent {
             for (let i = 1; i < items.length - 1; i++) {
                 el = items[i];
                 this.itemHeights[parseInt(el.dataset.index, 10)] = el.offsetHeight;
-                // el.getBoundingClientRect();
             }
             this.setState({ scrollTop: this.listWrapperRef.scrollTop });
             this.didScroll = false;
@@ -44,7 +51,7 @@ export default class VirtualList extends React.PureComponent {
         height
     }));
 
-    handleScroll = (event) => this.didScroll = true;
+    handleScroll = (evt) => this.didScroll = true;
 
     saveListWrapperRef = (r) => this.listWrapperRef = r;
 

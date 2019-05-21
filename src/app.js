@@ -19,7 +19,7 @@ const App = () => {
             <AdaptiveVirtualList
                 itemsCount={randomHeightItems.length}
                 height={500}
-                approxItemHeight={50}
+                approxItemHeight={200}
                 ItemComponent={RandomHeightItem}
             />
         </div>
