@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import './adaptive-virtual-list.scss';
 
-export default class VirtualList extends React.PureComponent {
+export default class AdaptiveVirtualList extends React.PureComponent {
     didScroll = false;
 
     constructor(props) {
@@ -32,7 +32,7 @@ export default class VirtualList extends React.PureComponent {
         if (this.didScroll) {
             const items = this.listWrapperRef.childNodes;
             let el;
-            for (let i = 1; i < items.length - 1; i++) {
+            for (let i = 1; i < items.length - 1; i++) { // skipping empty space divs
                 el = items[i];
                 this.itemHeights[parseInt(el.dataset.index, 10)] = el.offsetHeight;
             }
@@ -56,22 +56,24 @@ export default class VirtualList extends React.PureComponent {
     saveListWrapperRef = (r) => this.listWrapperRef = r;
 
     renderVisibleItems() {
-        const { itemsCount, ItemComponent } = this.props;
+        const { itemsCount, ItemComponent, height } = this.props;
+        const { scrollTop } = this.state;
+        const { itemHeights } = this;
         let heightSoFar = 0;
         let topEmptySpaceHeight = 0;
         let bottomEmptySpaceHeight = 0;
         let startIndex = 0;
         let endIndex = itemsCount - 1;
         for (let i = 0; i < itemsCount; i++) {
-            if (this.state.scrollTop > heightSoFar + this.itemHeights[i]) {
-                topEmptySpaceHeight += this.itemHeights[i];
+            if (scrollTop > heightSoFar + itemHeights[i]) {
+                topEmptySpaceHeight += itemHeights[i];
                 startIndex++;
-            } else if (heightSoFar - this.state.scrollTop < this.props.height) {
+            } else if (heightSoFar - scrollTop < height) {
                 endIndex = i;
             } else {
-                bottomEmptySpaceHeight += this.itemHeights[i];
+                bottomEmptySpaceHeight += itemHeights[i];
             }
-            heightSoFar += this.itemHeights[i];
+            heightSoFar += itemHeights[i];
         }
 
         const items = [];
@@ -83,9 +85,15 @@ export default class VirtualList extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <div style={{ height: topEmptySpaceHeight }} />
+                <div
+                    className="adaptive-virtual-list__empty-space"
+                    style={{ height: topEmptySpaceHeight }}
+                />
                 {items}
-                <div style={{ height: bottomEmptySpaceHeight }} />
+                <div
+                    style={{ height: bottomEmptySpaceHeight }}
+                    className="adaptive-virtual-list__empty-space"
+                />
             </React.Fragment>
         );
     }
@@ -102,7 +110,7 @@ export default class VirtualList extends React.PureComponent {
     }
 }
 
-VirtualList.propTypes = {
+AdaptiveVirtualList.propTypes = {
     style: PropTypes.object,
     height: PropTypes.number.isRequired,
     approxItemHeight: PropTypes.number.isRequired,
@@ -110,6 +118,6 @@ VirtualList.propTypes = {
     itemsCount: PropTypes.number.isRequired
 }
 
-VirtualList.defaultProps = {
+AdaptiveVirtualList.defaultProps = {
     style: {}
 };

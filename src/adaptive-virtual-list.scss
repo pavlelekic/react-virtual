@@ -1,9 +1,10 @@
 .adaptive-virtual-list {
     overflow-y: scroll;
+    contain: layout;
 
-    // &__content-wrapper {
-    //     position: relative;
-    // }
+    &__empty-space {
+        contain: layout;
+    }
 
     // &__item-wrapper {
     //     position: absolute;
