@@ -14,7 +14,8 @@ for (let i = 0; i < 1000; i++) {
 export default class RandomHeightItem extends React.PureComponent {
     static sharedStyle = {
         padding: '10px 20px',
-        contain: 'layout'
+        contain: 'layout', // add this to your component
+        willChange: 'contents' // add this to your component
     };
 
     static oddItemStyle = {
