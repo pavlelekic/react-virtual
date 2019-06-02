@@ -6,13 +6,18 @@ import './adaptive-virtual-list.scss';
 export default class AdaptiveVirtualList extends React.PureComponent {
     didScroll = false;
 
+    static UNDEFINED = -1;
+
     constructor(props) {
         super(props);
         this.state = { scrollTop: 0 };
-        this.itemHeights = [];
-        for (let i = 0; i < props.itemsCount; i++) {
-            this.itemHeights.push(props.approxItemHeight);
+        const { UNDEFINED } = AdaptiveVirtualList;
+        const measuredItemHeights = [];
+        const len = props.itemsCount;
+        for (let i = 0; i < len; i++) {
+            measuredItemHeights.push(UNDEFINED);
         }
+        this.measuredItemHeights = measuredItemHeights;
         this.updateDom = this.updateDom.bind(this);
     }
 
@@ -34,7 +39,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
             let el;
             for (let i = 1; i < items.length - 1; i++) { // skipping empty space divs
                 el = items[i];
-                this.itemHeights[parseInt(el.dataset.index, 10)] = el.offsetHeight;
+                this.measuredItemHeights[parseInt(el.dataset.index, 10)] = el.offsetHeight;
             }
             this.setState({ scrollTop: this.listWrapperRef.scrollTop });
             this.didScroll = false;
@@ -56,33 +61,46 @@ export default class AdaptiveVirtualList extends React.PureComponent {
     saveListWrapperRef = (r) => this.listWrapperRef = r;
 
     renderVisibleItems() {
-        const { itemsCount, ItemComponent, height } = this.props;
+        const { itemsCount, ItemComponent, approxItemHeight } = this.props;
         const { scrollTop } = this.state;
-        const { itemHeights } = this;
+        const { measuredItemHeights } = this;
         let heightSoFar = 0;
         let topEmptySpaceHeight = 0;
         let bottomEmptySpaceHeight = 0;
         let startIndex = 0;
-        let endIndex = itemsCount - 1;
+        let itemHeight;
+        const { UNDEFINED } = AdaptiveVirtualList;
         for (let i = 0; i < itemsCount; i++) {
-            if (scrollTop > heightSoFar + itemHeights[i]) {
-                topEmptySpaceHeight += itemHeights[i];
+            itemHeight = measuredItemHeights[i] === UNDEFINED
+                ? approxItemHeight
+                : measuredItemHeights[i];
+            if (scrollTop > heightSoFar + itemHeight) {
+                topEmptySpaceHeight += itemHeight;
                 startIndex++;
-            } else if (heightSoFar - scrollTop < height) {
-                endIndex = i;
-            } else {
-                bottomEmptySpaceHeight += itemHeights[i];
-            }
-            heightSoFar += itemHeights[i];
+            } 
+            heightSoFar += itemHeight;
         }
-
+        const totalHeight = heightSoFar;
+        const endIndex = Math.min(itemsCount - 1, startIndex + this.props.numOfItemsToRender);
+        let renderedItemsHeight = 0;
         const items = [];
-        for (let i = startIndex; i <= endIndex; i++) {
-            items.push(
-                <ItemComponent index={i} key={i - startIndex} />
-            );
+        let areAllRenderedItemsMeasured = true;
+        for (let i = startIndex; i < endIndex; i++) {
+            if (measuredItemHeights[i] === UNDEFINED) {
+                renderedItemsHeight += approxItemHeight;
+                areAllRenderedItemsMeasured = false;
+            }
+            else {
+                renderedItemsHeight += measuredItemHeights[i];
+            }
+            items.push( <ItemComponent index={i} key={i - startIndex} /> );
         }
+        bottomEmptySpaceHeight = totalHeight - topEmptySpaceHeight - renderedItemsHeight;
 
+        if (process.env.NODE_ENV === 'development' && areAllRenderedItemsMeasured && renderedItemsHeight < this.props.height) {
+            console.warn('You need to increase numOfItemsToRender, there is empty space on screen not covered with items!');
+        }
+    
         return (
             <React.Fragment>
                 <div
@@ -113,6 +131,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
 AdaptiveVirtualList.propTypes = {
     style: PropTypes.object,
     height: PropTypes.number.isRequired,
+    numOfItemsToRender: PropTypes.number.isRequired,
     approxItemHeight: PropTypes.number.isRequired,
     ItemComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
     itemsCount: PropTypes.number.isRequired
