@@ -56,7 +56,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
         height
     }));
 
-    handleScroll = (evt) => this.didScroll = true;
+    handleScroll = () => this.didScroll = true;
 
     saveListWrapperRef = (r) => this.listWrapperRef = r;
 
