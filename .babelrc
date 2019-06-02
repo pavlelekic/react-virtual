@@ -1,7 +1,6 @@
 {
   "plugins": [
     "@babel/plugin-transform-react-constant-elements",
-    "@babel/plugin-transform-react-inline-elements",
-    "transform-remove-console"
+    "@babel/plugin-transform-react-inline-elements"
   ]
 }
