@@ -60,7 +60,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
 
     saveListWrapperRef = (r) => this.listWrapperRef = r;
 
-    renderVisibleItems() {
+    render() {
         const { itemsCount, ItemComponent, approxItemHeight } = this.props;
         const { scrollTop } = this.state;
         const { measuredItemHeights } = this;
@@ -77,7 +77,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
             if (scrollTop > heightSoFar + itemHeight) {
                 topEmptySpaceHeight += itemHeight;
                 startIndex++;
-            } 
+            }
             heightSoFar += itemHeight;
         }
         const totalHeight = heightSoFar;
@@ -93,37 +93,31 @@ export default class AdaptiveVirtualList extends React.PureComponent {
             else {
                 renderedItemsHeight += measuredItemHeights[i];
             }
-            items.push( <ItemComponent index={i} key={i - startIndex} /> );
+            items.push(<ItemComponent index={i} key={i - startIndex} />);
         }
         bottomEmptySpaceHeight = totalHeight - topEmptySpaceHeight - renderedItemsHeight;
 
-        if (process.env.NODE_ENV === 'development' && areAllRenderedItemsMeasured && renderedItemsHeight < this.props.height) {
+        if (process.env.NODE_ENV !== 'production' && areAllRenderedItemsMeasured && renderedItemsHeight < this.props.height) {
             console.warn('You need to increase numOfItemsToRender, there is empty space on screen not covered with items!');
         }
-    
-        return (
-            <React.Fragment>
-                <div
-                    className="adaptive-virtual-list__empty-space"
-                    style={{ height: topEmptySpaceHeight }}
-                />
-                {items}
-                <div
-                    style={{ height: bottomEmptySpaceHeight }}
-                    className="adaptive-virtual-list__empty-space"
-                />
-            </React.Fragment>
-        );
-    }
 
-    render() {
         return (
+          <div
+            className="adaptive-virtual-list"
+            ref={this.saveListWrapperRef}
+            style={this.calcListWrapperStyle(this.props.style, this.props.height)}
+            onScroll={this.handleScroll}
+          >
             <div
-                className="adaptive-virtual-list"
-                ref={this.saveListWrapperRef}
-                style={this.calcListWrapperStyle(this.props.style, this.props.height)}
-                onScroll={this.handleScroll}
-            >{this.renderVisibleItems()}</div>
+                className="adaptive-virtual-list__empty-space"
+                style={{ height: topEmptySpaceHeight }}
+            />
+            {items}
+            <div
+                style={{ height: bottomEmptySpaceHeight }}
+                className="adaptive-virtual-list__empty-space"
+            />
+          </div>
         );
     }
 }
