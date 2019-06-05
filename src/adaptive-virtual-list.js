@@ -22,6 +22,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
     }
 
     componentDidMount() {
+        window.reactVirtaulListCalcStats = this.calcAvgItemHeight;
         this.rafHandle = window.requestAnimationFrame(this.updateDom);
     }
 
@@ -48,6 +49,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        window.reactVirtaulListCalcAvgItemHeight = undefined;
         window.cancelAnimationFrame(this.rafHandle);
     }
 
@@ -59,6 +61,20 @@ export default class AdaptiveVirtualList extends React.PureComponent {
     handleScroll = () => this.didScroll = true;
 
     saveListWrapperRef = (r) => this.listWrapperRef = r;
+
+    calcAvgItemHeight = () => {
+      const { measuredItemHeights } = this;
+      let count = 0;
+      let sum  = 0;
+      for (let i =0; i < measuredItemHeights.length; i++) {
+        if (measuredItemHeights[i] !== AdaptiveVirtualList.UNDEFINED) {
+            count++;
+            sum += measuredItemHeights[i];
+        }
+      }
+
+      alert(`Average item height is ${Math.round(sum / count)}, number of items used in calculation is ${count}.`);
+    };
 
     render() {
         const { itemsCount, ItemComponent, approxItemHeight } = this.props;
