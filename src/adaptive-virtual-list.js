@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
+import EmptySpace from './empty-space';
 import './adaptive-virtual-list.scss';
 
 export default class AdaptiveVirtualList extends React.PureComponent {
@@ -25,12 +26,14 @@ export default class AdaptiveVirtualList extends React.PureComponent {
         this.rafHandle = window.requestAnimationFrame(this.updateDom);
     }
 
-    getSnapshotBeforeUpdate = () => this.listWrapperRef.scrollTop;
+    // getSnapshotBeforeUpdate = () => this.listWrapperRef.scrollTop;
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (snapshot !== null) {
-            this.listWrapperRef.scrollTop = snapshot;
-        }
+        this.listWrapperRef.scrollTop = this.state.scrollTop;
+
+        // if (snapshot !== null) {
+        //     this.listWrapperRef.scrollTop = snapshot;
+        // }
     }
 
     updateDom() {
@@ -41,8 +44,8 @@ export default class AdaptiveVirtualList extends React.PureComponent {
                 el = items[i];
                 this.measuredItemHeights[parseInt(el.dataset.index, 10)] = el.offsetHeight;
             }
-            this.setState({ scrollTop: this.listWrapperRef.scrollTop });
             this.didScroll = false;
+            this.setState({ scrollTop: this.listWrapperRef.scrollTop });
         }
         this.rafHandle = window.requestAnimationFrame(this.updateDom);
     }
@@ -98,7 +101,7 @@ export default class AdaptiveVirtualList extends React.PureComponent {
         bottomEmptySpaceHeight = totalHeight - topEmptySpaceHeight - renderedItemsHeight;
 
         if (process.env.NODE_ENV !== 'production' && areAllRenderedItemsMeasured && renderedItemsHeight < this.props.height) {
-            console.warn('You need to increase numOfItemsToRender, there is empty space on screen not covered with items!');
+            // console.warn('You need to increase numOfItemsToRender, there is empty space on screen not covered with items!');
         }
 
         return (
@@ -108,15 +111,9 @@ export default class AdaptiveVirtualList extends React.PureComponent {
             style={this.calcListWrapperStyle(this.props.style, this.props.height)}
             onScroll={this.handleScroll}
           >
-            <div
-                className="adaptive-virtual-list__empty-space"
-                style={{ height: topEmptySpaceHeight }}
-            />
+            <EmptySpace height={topEmptySpaceHeight} />
             {items}
-            <div
-                style={{ height: bottomEmptySpaceHeight }}
-                className="adaptive-virtual-list__empty-space"
-            />
+            <EmptySpace height={bottomEmptySpaceHeight} />
           </div>
         );
     }
