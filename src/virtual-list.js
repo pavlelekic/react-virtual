@@ -34,7 +34,7 @@ export default class VirtualList extends React.PureComponent {
     height
   }));
 
-  handleScroll = (event) => this.didScroll = true;
+  handleScroll = () => this.didScroll = true;
 
   calcContentWrapperStyle = memoize((itemHeight, itemsCount) => ({
     height: itemHeight * itemsCount

@@ -1,6 +1,7 @@
 .virtual-list {
     overflow-y: scroll;
     contain: layout;
+    will-change: scroll-position;
 
     &__content-wrapper {
         position: relative;
@@ -11,5 +12,6 @@
         position: absolute;
         width: 100%;
         contain: layout;
+        will-change: contents;
     }
 }

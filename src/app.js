@@ -20,6 +20,7 @@ const App = () => {
                 itemsCount={randomHeightItems.length}
                 height={500}
                 approxItemHeight={200}
+                numOfItemsToRender={4}
                 ItemComponent={RandomHeightItem}
             />
         </div>
